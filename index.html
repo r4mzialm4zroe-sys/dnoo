@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>رسالة لدنوو</title>
+<meta property="og:title" content="رسالة لك 💌">
+<meta property="og:description" content="اضغطي على الظرف">
+<meta name="theme-color" content="#24101a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marhey:wght@400;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap">
+<style>
+  /* Layout: one centered stage, screens stacked on top of each other and swapped with a soft fade */
+  :root {
+    --night: #24101a;
+    --plum: #3a1526;
+    --wine: #5a2140;
+    --rose: #e98fb0;
+    --rose-deep: #d0698f;
+    --blush: #f6d2df;
+    --gold: #f2bf6a;
+    --cream: #fbeee6;
+    --ink: #3b1a28;
+    --muted: #c9a3b3;
+    --font-display: "Marhey", "IBM Plex Sans Arabic", system-ui, sans-serif;
+    --font-body: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif;
+    color-scheme: dark;
+  }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(120% 70% at 50% 0%, #4a2229 0%, transparent 60%),
+      radial-gradient(90% 60% at 50% 100%, #4b1630 0%, transparent 65%),
+      var(--night);
+    color: var(--cream);
+    font-family: var(--font-body);
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button { font: inherit; }
+
+  /* floating hearts */
+  .hearts { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+  .hearts span {
+    position: absolute; bottom: -30px; color: var(--rose); opacity: 0;
+    animation: rise linear infinite;
+  }
+  @keyframes rise {
+    0% { transform: translateY(0) rotate(0); opacity: 0; }
+    10% { opacity: .35; }
+    90% { opacity: .25; }
+    100% { transform: translateY(-110vh) rotate(25deg); opacity: 0; }
+  }
+
+  /* top controls */
+  .sound {
+    position: fixed; z-index: 20;
+    top: calc(12px + env(safe-area-inset-top, 0px));
+    left: calc(12px + env(safe-area-inset-left, 0px));
+    width: 38px; height: 38px; border-radius: 50%;
+    border: 1px solid rgba(246, 210, 223, .2);
+    background: rgba(255, 255, 255, .06); color: var(--cream);
+    cursor: pointer; font-size: 16px; display: grid; place-items: center;
+  }
+  .sound:focus-visible, .btn:focus-visible, .day:focus-visible, .envelope:focus-visible {
+    outline: 2px solid var(--gold); outline-offset: 3px;
+  }
+
+  /* stage + screens */
+  .stage { position: relative; height: 100%; }
+  .screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 18px; text-align: center;
+    padding-block: 64px 40px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    opacity: 0; visibility: hidden; transform: translateY(14px);
+    transition: opacity .55s ease, transform .55s ease, visibility 0s .55s;
+    overflow-y: auto;
+  }
+  .screen.on {
+    opacity: 1; visibility: visible; transform: none;
+    transition: opacity .55s ease .1s, transform .55s ease .1s, visibility 0s;
+  }
+
+  h1, h2 { font-family: var(--font-display); margin: 0; text-wrap: balance; line-height: 1.35; }
+  h1 { font-size: clamp(34px, 8vw, 48px); font-weight: 700; }
+  h2 { font-size: clamp(28px, 7vw, 40px); font-weight: 700; }
+  .name { color: var(--rose); }
+  .lead { font-family: var(--font-display); font-size: clamp(19px, 4.8vw, 24px); margin: 0; min-height: 1.6em; }
+  .hint { color: var(--muted); font-size: 14px; margin: 0; }
+  .emoji { font-size: 56px; line-height: 1; filter: drop-shadow(0 6px 18px rgba(0,0,0,.35)); }
+  .pop { animation: pop .6s cubic-bezier(.3,1.6,.5,1) both; }
+  @keyframes pop { from { transform: scale(.3); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* buttons */
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .btn {
+    border: 0; cursor: pointer; border-radius: 999px;
+    padding: 12px 24px; font-weight: 700; font-size: 16px;
+    transition: transform .25s ease, opacity .3s ease, font-size .25s ease, padding .25s ease;
+    text-decoration: none; display: inline-block; white-space: nowrap;
+  }
+  .btn:active { transform: scale(.96); }
+  .btn-main {
+    background: linear-gradient(180deg, var(--rose), var(--rose-deep)); color: #fff;
+    box-shadow: 0 10px 28px rgba(208, 105, 143, .4);
+  }
+  .btn-ghost {
+    background: rgba(255,255,255,.06); color: var(--blush);
+    border: 1px solid rgba(246,210,223,.25);
+  }
+
+  /* intro: envelope */
+  .envelope {
+    position: relative; width: min(220px, 60vw); aspect-ratio: 3 / 2; max-width: 100%;
+    cursor: pointer; perspective: 700px; background: none; border: 0; padding: 0;
+    animation: bob 3s ease-in-out infinite;
+  }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  .env-body {
+    position: absolute; inset: 0; border-radius: 10px;
+    background: linear-gradient(180deg, #f7c9d8, #eaa9c0);
+    box-shadow: 0 20px 40px rgba(0,0,0,.35);
+  }
+  .env-letter {
+    position: absolute; left: 7%; right: 7%; top: 6%; bottom: 8%; z-index: 2;
+    border-radius: 6px; padding-top: 10px;
+    background:
+      repeating-linear-gradient(180deg, transparent 0 15px, rgba(208,105,143,.16) 15px 16px) 0 46px / 100% calc(100% - 46px) no-repeat,
+      var(--cream);
+    color: var(--ink); font-family: var(--font-display);
+    display: flex; justify-content: center; align-items: flex-start; gap: 6px;
+    font-size: 19px; font-weight: 700;
+    box-shadow: 0 -4px 14px rgba(0,0,0,.12);
+    transition: transform .8s cubic-bezier(.25,1.25,.5,1) .45s;
+  }
+  .env-letter .to { color: var(--rose-deep); }
+  .env-front {
+    position: absolute; inset: 0; border-radius: 10px; z-index: 3;
+    background: linear-gradient(180deg, #f3bccf, #e7a3bb);
+    clip-path: polygon(0 35%, 50% 72%, 100% 35%, 100% 100%, 0 100%);
+  }
+  .env-flap {
+    position: absolute; left: 0; right: 0; top: 0; height: 62%;
+    background: linear-gradient(180deg, #e48fae, #ec9fbb);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top; z-index: 4;
+    /* drop behind the paper once the flap is edge-on, halfway through the turn */
+    transition: transform .5s ease, z-index 0s linear .25s;
+  }
+  .env-seal {
+    position: absolute; left: 50%; top: 62%; width: 34px; height: 34px; margin: -17px 0 0 -17px;
+    border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffd995, var(--gold) 60%, #d79a3d);
+    color: var(--ink); display: grid; place-items: center; font-size: 15px; z-index: 5;
+    box-shadow: 0 4px 10px rgba(0,0,0,.25); transition: opacity .25s ease;
+  }
+  .envelope.open { animation: none; }
+  .envelope.open .env-flap { transform: rotateX(180deg); z-index: 1; }
+  .envelope.open .env-seal { opacity: 0; }
+  .envelope.open .env-letter { transform: translateY(-64%); }
+
+  .to-line { position: relative; display: inline-block; }
+  .struck { position: relative; display: inline-block; }
+  .struck::after {
+    content: ""; position: absolute; right: -4px; left: -4px; top: 55%; height: 4px; border-radius: 4px;
+    background: var(--rose); transform: scaleX(0); transform-origin: right;
+    transition: transform .45s ease;
+  }
+  .struck.cut::after { transform: scaleX(1); }
+  .oops {
+    font-family: var(--font-display); font-size: clamp(20px, 5vw, 26px); margin: 0;
+    opacity: 0; transform: translateY(6px); transition: opacity .4s ease, transform .4s ease;
+  }
+  .oops.on { opacity: 1; transform: none; }
+
+  /* chat bubbles */
+  .bubbles {
+    position: absolute; left: 0; right: 0; top: calc(60px + env(safe-area-inset-top, 0px));
+    display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none;
+  }
+  .bubble {
+    background: rgba(255,255,255,.08); border: 1px solid rgba(246,210,223,.18);
+    padding: 7px 16px; border-radius: 18px; font-size: 14px; color: var(--blush);
+    animation: pop .5s cubic-bezier(.3,1.6,.5,1) both;
+  }
+  .bubble.me { background: rgba(233,143,176,.22); }
+
+  /* day picker */
+  .days { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 360px; }
+  .day {
+    min-width: 92px; padding: 10px 14px; border-radius: 14px; cursor: pointer;
+    background: rgba(255,255,255,.06); color: var(--cream);
+    border: 1px solid rgba(246,210,223,.2); font-weight: 500; font-size: 15px;
+    transition: background .2s ease, transform .2s ease;
+  }
+  .day:hover { background: rgba(233,143,176,.18); }
+  .day.picked { background: var(--rose-deep); transform: scale(1.06); }
+
+  /* invitation ticket */
+  .gold-title { color: var(--gold); }
+  .ticket {
+    width: min(340px, 100%); background: var(--cream); color: var(--ink);
+    border-radius: 18px; overflow: hidden; text-align: right;
+    box-shadow: 0 24px 50px rgba(0,0,0,.4);
+  }
+  .ticket-head {
+    display: flex; justify-content: space-between; align-items: center;
+    background: linear-gradient(180deg, var(--rose), var(--rose-deep)); color: #fff;
+    padding: 12px 18px; font-family: var(--font-display); font-size: 17px;
+  }
+  .ticket dl { margin: 0; padding: 4px 18px 8px; }
+  .ticket .line {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+    padding: 11px 0; border-bottom: 1px dashed #e3c3cf;
+  }
+  .ticket .line:last-child { border-bottom: 0; }
+  .ticket dt { color: #9b7584; font-size: 13px; flex: none; }
+  .ticket dd { margin: 0; font-weight: 700; font-size: 16px; min-width: 0; text-align: left; }
+  .small { color: var(--muted); font-size: 12.5px; margin: 0; }
+
+  canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+
+  .linkish { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    .hearts { display: none; }
+  }
+</style>
+
+<div class="hearts" id="hearts" aria-hidden="true"></div>
+<button class="sound" id="sound" aria-label="الصوت">🔊</button>
+<canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
+
+<main class="stage" dir="rtl" lang="ar">
+  <!-- 1. envelope -->
+  <section class="screen on" id="s-intro">
+    <button class="envelope" id="envelope" aria-label="افتحي الظرف">
+      <span class="env-body"></span>
+      <span class="env-letter"><span>لـ <span class="to" data-name></span></span><span>💗</span></span>
+      <span class="env-front"></span>
+      <span class="env-flap"></span>
+      <span class="env-seal">♥</span>
+    </button>
+    <h1><span class="to-line">رسالة لـ <span class="struck" id="struck">البيت</span></span></h1>
+    <p class="oops" id="oops">قصدي.. <span class="name" data-name></span> 😅</p>
+    <p class="hint">اضغطي على الظرف</p>
+  </section>
+
+  <!-- 2. still upset? -->
+  <section class="screen" id="s-angry">
+    <div class="bubbles" id="angry-bubbles"></div>
+    <div class="emoji" id="angry-emoji">😒</div>
+    <h2>يا <span class="name" data-name></span>..<br>للحين زعلانة؟</h2>
+    <div class="row">
+      <button class="btn btn-main" id="not-upset">لا مو زعلانة</button>
+      <button class="btn btn-ghost" id="still-upset">إيه زعلانة</button>
+    </div>
+  </section>
+
+  <!-- 3. relief + typewriter -->
+  <section class="screen" id="s-relief">
+    <div class="emoji">😮‍💨</div>
+    <h2>الحمدلله..</h2>
+    <p class="lead" id="typer" aria-live="polite"></p>
+    <button class="btn btn-main" id="how" hidden>وش أسلوبك؟ 🤨</button>
+  </section>
+
+  <!-- 4. pick a day -->
+  <section class="screen" id="s-dinner">
+    <div class="bubbles"><div class="bubble me">وش أسلوبك؟ 🤨</div></div>
+    <div class="emoji">🍽️</div>
+    <h2>عازمك على العشاء</h2>
+    <p class="hint">اختاري اليوم اللي يناسبك</p>
+    <div class="days" id="days"></div>
+  </section>
+
+  <!-- 5. invitation -->
+  <section class="screen" id="s-invite">
+    <h2 class="gold-title"><span data-day></span> الساعة <span data-hour></span></h2>
+    <p class="lead">جهزي نفسك ✨</p>
+    <article class="ticket" aria-label="دعوة عشاء">
+      <div class="ticket-head"><span>دعوة عشاء</span><span>🕯️</span></div>
+      <dl>
+        <div class="line"><dt>الحجز باسم</dt><dd><span data-name></span>.. مو البيت 😌</dd></div>
+        <div class="line"><dt>اليوم</dt><dd data-day></dd></div>
+        <div class="line"><dt>الساعة</dt><dd data-time></dd></div>
+        <div class="line"><dt>المكان</dt><dd data-place></dd></div>
+        <div class="line"><dt>اللبس</dt><dd data-outfit></dd></div>
+      </dl>
+    </article>
+    <a class="btn btn-main" id="accept" href="#" target="_blank" rel="noopener">قبلت الدعوة 🤍</a>
+    <p class="small">يفتح لك واتساب برسالة جاهزة</p>
+  </section>
+
+  <!-- 6. the end -->
+  <section class="screen" id="s-end">
+    <div class="emoji">🤍</div>
+    <h2>أشوفك <span data-day></span></h2>
+    <p class="lead">ولا تنسين.. <span data-outfit></span> 😌</p>
+    <button class="linkish" id="restart">من البداية ↺</button>
+  </section>
+</main>
+
+<script>
+(() => {
+  // ===== edit these =====
+  const CONFIG = {
+    name: "دنوو",
+    hour: "8",
+    time: "8:00 مساءً",
+    place: "مطعمنا 📍",
+    outfit: "أحلى شي عندك",
+    whatsapp: "" // your number with country code, digits only (e.g. 9665XXXXXXXX). Empty = she picks the chat.
+  };
+  // =======================
+
+  document.documentElement.lang = "ar";
+  document.documentElement.dir = "rtl";
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  let day = "";
+
+  const fill = () => {
+    $$("[data-name]").forEach(e => e.textContent = CONFIG.name);
+    $$("[data-hour]").forEach(e => e.textContent = CONFIG.hour);
+    $$("[data-time]").forEach(e => e.textContent = CONFIG.time);
+    $$("[data-place]").forEach(e => e.textContent = CONFIG.place);
+    $$("[data-outfit]").forEach(e => e.textContent = CONFIG.outfit);
+    $$("[data-day]").forEach(e => e.textContent = day);
+  };
+  fill();
+
+  const show = id => {
+    $$(".screen").forEach(s => s.classList.toggle("on", s.id === id));
+  };
+
+  // ---------- hearts ----------
+  const hearts = $("#hearts");
+  for (let i = 0; i < 16; i++) {
+    const h = document.createElement("span");
+    h.textContent = "♥";
+    h.style.left = Math.random() * 100 + "%";
+    h.style.fontSize = 10 + Math.random() * 14 + "px";
+    h.style.animationDuration = 12 + Math.random() * 14 + "s";
+    h.style.animationDelay = -Math.random() * 20 + "s";
+    hearts.appendChild(h);
+  }
+
+  // ---------- sound (synthesized, no files) ----------
+  let soundOn = true, ctx = null, musicTimer = null;
+  const audio = () => {
+    if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } }
+    if (ctx.state === "suspended") ctx.resume();
+    return ctx;
+  };
+  const tone = (freq, at = 0, len = .5, vol = .08) => {
+    if (!soundOn) return;
+    const a = audio(); if (!a) return;
+    const t = a.currentTime + at;
+    const o = a.createOscillator(), g = a.createGain();
+    o.type = "sine"; o.frequency.value = freq;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol, t + .02);
+    g.gain.exponentialRampToValueAtTime(.0001, t + len);
+    o.connect(g).connect(a.destination);
+    o.start(t); o.stop(t + len + .05);
+  };
+  const pop = () => { tone(880, 0, .18, .07); tone(1320, .05, .2, .05); };
+  const chime = () => [523, 659, 784, 1046].forEach((f, i) => tone(f, i * .09, .7, .06));
+  const melody = [659, 784, 880, 784, 659, 587, 523, 587];
+  const startMusic = () => {
+    if (musicTimer || !soundOn) return;
+    let i = 0;
+    musicTimer = setInterval(() => { tone(melody[i % melody.length], 0, 1.1, .03); i++; }, 650);
+  };
+  const stopMusic = () => { clearInterval(musicTimer); musicTimer = null; };
+  $("#sound").addEventListener("click", () => {
+    soundOn = !soundOn;
+    $("#sound").textContent = soundOn ? "🔊" : "🔈";
+    if (soundOn) { audio(); startMusic(); } else stopMusic();
+  });
+
+  // ---------- 1. intro ----------
+  const introTimers = [];
+  const playIntro = () => {
+    $("#struck").classList.remove("cut");
+    $("#oops").classList.remove("on");
+    introTimers.push(setTimeout(() => $("#struck").classList.add("cut"), 1300));
+    introTimers.push(setTimeout(() => $("#oops").classList.add("on"), 1900));
+  };
+  playIntro();
+
+  $("#envelope").addEventListener("click", async () => {
+    const env = $("#envelope");
+    if (env.classList.contains("open")) return;
+    $("#struck").classList.add("cut"); $("#oops").classList.add("on");
+    env.classList.add("open");
+    chime(); startMusic();
+    await wait(2100);
+    show("s-angry");
+  });
+
+  // ---------- 2. still upset? ----------
+  const pleas = ["متأكدة؟ 🥺", "متأكدة متأكدة؟ 😢", "طيب آخر فرصة 🥹"];
+  const faces = ["🥺", "😢", "🥹"];
+  let tries = 0;
+  $("#still-upset").addEventListener("click", e => {
+    pop();
+    const b = document.createElement("div");
+    b.className = "bubble"; b.textContent = pleas[tries];
+    $("#angry-bubbles").replaceChildren(b);
+    $("#angry-emoji").textContent = faces[tries];
+    $("#angry-emoji").classList.remove("pop"); void $("#angry-emoji").offsetWidth; $("#angry-emoji").classList.add("pop");
+    tries++;
+    const yes = $("#not-upset"), no = e.currentTarget;
+    yes.style.fontSize = 16 + tries * 3 + "px";
+    yes.style.padding = `${12 + tries * 2}px ${24 + tries * 6}px`;
+    no.style.fontSize = Math.max(16 - tries * 3, 9) + "px";
+    if (tries >= pleas.length) no.hidden = true;
+  });
+
+  // ---------- 3. relief ----------
+  const typer = $("#typer");
+  const type = async (text, speed = 70) => {
+    for (const ch of Array.from(text)) { typer.textContent += ch; if (ch.trim()) tone(1500, 0, .04, .015); await wait(reduceMotion ? 0 : speed); }
+  };
+  const erase = async (count, speed = 45) => {
+    for (let i = 0; i < count; i++) { typer.textContent = Array.from(typer.textContent).slice(0, -1).join(""); await wait(reduceMotion ? 0 : speed); }
+  };
+  $("#not-upset").addEventListener("click", async () => {
+    chime();
+    show("s-relief");
+    typer.textContent = ""; $("#how").hidden = true;
+    await wait(700);
+    await type("طيب أبي أراضيك.. بحاجة");
+    await wait(650);
+    await erase(Array.from("بحاجة").length);
+    await wait(250);
+    await type("بس بأسلوبي 😏");
+    await wait(400);
+    $("#how").hidden = false; $("#how").classList.add("pop");
+  });
+
+  // ---------- 4. day picker ----------
+  const names = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+  const daysBox = $("#days");
+  names.forEach(n => {
+    const b = document.createElement("button");
+    b.className = "day"; b.textContent = n;
+    b.addEventListener("click", async () => {
+      if (day) return;
+      day = n; fill(); pop();
+      b.classList.add("picked");
+      await wait(450);
+      buildWhatsApp();
+      show("s-invite");
+      confetti();
+      chime();
+    });
+    daysBox.appendChild(b);
+  });
+  $("#how").addEventListener("click", () => { pop(); show("s-dinner"); });
+
+  // ---------- 5. invitation ----------
+  const buildWhatsApp = () => {
+    const msg = `قبلت الدعوة 🤍\nأشوفك يوم ${day} الساعة ${CONFIG.time}\n${CONFIG.name}`;
+    const num = CONFIG.whatsapp.replace(/\D/g, "");
+    $("#accept").href = `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
+  };
+  $("#accept").addEventListener("click", () => {
+    chime();
+    setTimeout(() => { show("s-end"); confetti(); }, 300);
+  });
+
+  // ---------- 6. restart ----------
+  $("#restart").addEventListener("click", () => {
+    day = ""; tries = 0; fill();
+    $$(".day").forEach(d => d.classList.remove("picked"));
+    const no = $("#still-upset"), yes = $("#not-upset");
+    no.hidden = false; no.style.fontSize = ""; yes.style.fontSize = ""; yes.style.padding = "";
+    $("#angry-bubbles").replaceChildren(); $("#angry-emoji").textContent = "😒";
+    $("#envelope").classList.remove("open");
+    introTimers.forEach(clearTimeout); introTimers.length = 0;
+    show("s-intro"); playIntro();
+  });
+
+  // ---------- confetti ----------
+  const cv = $("#confetti"), cx = cv.getContext("2d");
+  let bits = [], raf = null;
+  const resize = () => { cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; };
+  addEventListener("resize", resize); resize();
+  function confetti() {
+    if (reduceMotion) return;
+    const colors = ["#f2bf6a", "#e98fb0", "#f6d2df", "#fbeee6", "#d0698f"];
+    for (let i = 0; i < 140; i++) {
+      bits.push({
+        x: Math.random() * cv.width, y: -Math.random() * cv.height * .5,
+        w: (5 + Math.random() * 6) * devicePixelRatio, h: (8 + Math.random() * 8) * devicePixelRatio,
+        vy: (1.5 + Math.random() * 2.5) * devicePixelRatio, vx: (Math.random() - .5) * 1.5 * devicePixelRatio,
+        r: Math.random() * 6, vr: (Math.random() - .5) * .2,
+        c: colors[i % colors.length], heart: Math.random() < .25
+      });
+    }
+    if (!raf) raf = requestAnimationFrame(step);
+  }
+  function step() {
+    cx.clearRect(0, 0, cv.width, cv.height);
+    bits = bits.filter(b => b.y < cv.height + 40);
+    for (const b of bits) {
+      b.y += b.vy; b.x += b.vx + Math.sin(b.y / 40); b.r += b.vr;
+      cx.save(); cx.translate(b.x, b.y); cx.rotate(b.r); cx.fillStyle = b.c;
+      if (b.heart) { cx.font = `${b.h * 1.4}px serif`; cx.fillText("♥", 0, 0); }
+      else cx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h);
+      cx.restore();
+    }
+    raf = bits.length ? requestAnimationFrame(step) : null;
+  }
+})();
+</script>
+
+</html>
